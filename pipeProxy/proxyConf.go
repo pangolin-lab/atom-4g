@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/btcsuite/btcutil/base58"
-	"github.com/proton-lab/autom/wallet"
+	"github.com/proton-lab/atom-4g/wallet"
 	"io"
 	"io/ioutil"
 	"net/http"

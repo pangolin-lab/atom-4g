@@ -4,10 +4,10 @@ import "C"
 import (
 	"fmt"
 	"github.com/btcsuite/btcutil/base58"
-	"github.com/proton-lab/autom/ethereum"
-	"github.com/proton-lab/autom/pipeProxy"
-	"github.com/proton-lab/autom/wallet"
-	"github.com/proton-lab/proton-node/account"
+	"github.com/proton-lab/atom-4g/ethereum"
+	"github.com/proton-lab/atom-4g/pipeProxy"
+	"github.com/proton-lab/atom-4g/wallet"
+	"github.com/proton-lab/proton-node-4g/account"
 )
 
 var proxyConf *pipeProxy.ProxyConfig = nil

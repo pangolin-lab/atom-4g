@@ -2,7 +2,7 @@ package pipeProxy
 
 import (
 	"fmt"
-	"github.com/proton-lab/autom/wallet"
+	"github.com/proton-lab/atom-4g/wallet"
 	"net"
 	"strconv"
 )

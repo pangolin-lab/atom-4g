@@ -9,7 +9,7 @@ import (
 	"github.com/google/gopacket/layers"
 	"github.com/pangolin-lab/atom-4g/4GService"
 	"github.com/pangolin-lab/atom-4g/wallet"
-	"github.com/pangolin-lab/proton-node-4g/account"
+	"github.com/pangolin-lab/go-node-4g/account"
 	"golang.org/x/net/publicsuffix"
 	"io/ioutil"
 	"net"

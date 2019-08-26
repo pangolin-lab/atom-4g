@@ -3,9 +3,9 @@ package wallet
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/pangolin-lab/proton-node-4g/account"
-	"github.com/pangolin-lab/proton-node-4g/network"
-	"github.com/pangolin-lab/proton-node-4g/service/rpcMsg"
+	"github.com/pangolin-lab/go-node-4g/account"
+	"github.com/pangolin-lab/go-node-4g/network"
+	"github.com/pangolin-lab/go-node-4g/service/rpcMsg"
 	"golang.org/x/crypto/ed25519"
 	"log"
 	"net"

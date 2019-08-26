@@ -8,7 +8,7 @@ import (
 	"github.com/pangolin-lab/atom-4g/4GService"
 	"github.com/pangolin-lab/atom-4g/tun2Pipe"
 	"github.com/pangolin-lab/atom-4g/wallet"
-	"github.com/pangolin-lab/proton-node-4g/account"
+	"github.com/pangolin-lab/go-node-4g/account"
 )
 
 type VpnDelegate interface {

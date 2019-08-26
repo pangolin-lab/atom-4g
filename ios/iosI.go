@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"github.com/btcsuite/btcutil/base58"
 	"github.com/pangolin-lab/atom-4g/4GService"
-	"github.com/pangolin-lab/proton-node-4g/account"
+	"github.com/pangolin-lab/go-node-4g/account"
 	"io/ioutil"
 	"net/http"
 	"strings"

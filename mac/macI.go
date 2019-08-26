@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"github.com/btcsuite/btcutil/base58"
 	"github.com/proton-lab/atom-4g/ethereum"
-	"github.com/proton-lab/atom-4g/pipeProxy"
+	"github.com/proton-lab/atom-4g/4GService"
 	"github.com/proton-lab/atom-4g/wallet"
 	"github.com/proton-lab/proton-node-4g/account"
 )
 
-var proxyConf *pipeProxy.ProxyConfig = nil
-var curProxy *pipeProxy.PipeProxy = nil
+var proxyConf *_GService.ProxyConfig = nil
+var curProxy *_GService.PipeProxy = nil
 
 //export LibCreateAccount
 func LibCreateAccount(password string) (*C.char, *C.char) {
@@ -51,7 +51,7 @@ func LibIsProtonAddress(address string) bool {
 
 //export LibInitProxy
 func LibInitProxy(addr, cipher, url, boot, path string) bool {
-	proxyConf = &pipeProxy.ProxyConfig{
+	proxyConf = &_GService.ProxyConfig{
 		WConfig: &wallet.WConfig{
 			BCAddr:     addr,
 			Cipher:     cipher,
@@ -92,7 +92,7 @@ func LibCreateProxy(password, locSer string) bool {
 		return false
 	}
 
-	proxy, e := pipeProxy.NewProxy(locSer, w, NewTunReader())
+	proxy, e := _GService.NewProxy(locSer, w, NewTunReader())
 	if e != nil {
 		fmt.Println(e)
 		return false

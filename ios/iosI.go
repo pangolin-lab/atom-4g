@@ -6,7 +6,7 @@ import (
 	"crypto/cipher"
 	"fmt"
 	"github.com/btcsuite/btcutil/base58"
-	"github.com/proton-lab/atom-4g/pipeProxy"
+	"github.com/proton-lab/atom-4g/4GService"
 	"github.com/proton-lab/proton-node-4g/account"
 	"io/ioutil"
 	"net/http"
@@ -21,13 +21,13 @@ const (
 
 func LoadNodes() string {
 
-	nodes := pipeProxy.LoadFromServer("")
+	nodes := _GService.LoadFromServer("")
 	return strings.Join(nodes, "\n")
 }
 
 func FindBestNode(nodesStr string) string {
 	nodes := strings.Split(nodesStr, "\n")
-	validIDs := pipeProxy.ProbeAllNodes(nodes, nil)
+	validIDs := _GService.ProbeAllNodes(nodes, nil)
 	if len(validIDs) == 0 {
 		return ""
 	}

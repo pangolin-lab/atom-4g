@@ -39,6 +39,7 @@ func (c *WConfig) String() string {
 		c.ServerId.String())
 }
 
+
 type PacketBucket struct {
 	sync.RWMutex
 	token  chan int
@@ -46,11 +47,12 @@ type PacketBucket struct {
 	total  int
 }
 
+
 type Wallet struct {
 	*PacketBucket
 	acc          *account.Account
 	sysSaver     func(fd uintptr)
-	payConn      *network.JsonConn
+	wConn        *network.JsonConn
 	aesKey       account.PipeCryptKey
 	minerID      account.ID
 	minerAddr    []byte
@@ -82,7 +84,7 @@ func NewWallet(conf *WConfig, password string) (*Wallet, error) {
 		return nil, err
 	}
 
-	if err := w.createRechargeChannel(); err != nil {
+	if err := w.flowControlChannel(); err != nil {
 		log.Println("Create payment channel err:", err)
 		return nil, err
 	}
@@ -92,32 +94,30 @@ func NewWallet(conf *WConfig, password string) (*Wallet, error) {
 	return w, nil
 }
 
-func (w *Wallet) createRechargeChannel() error {
+
+func (w *Wallet) flowControlChannel() error {
 	fmt.Printf("\ncreatePayChannel Wallet socks ID addr:%s ", w.minerNetAddr)
 	conn, err := w.getOuterConn(w.minerNetAddr)
 	if err != nil {
 		return err
 	}
-
 	sig := ed25519.Sign(w.acc.Key.PriKey, []byte(w.acc.Address))
-	hs := &rpcMsg.YPHandShake{
+	hs := &rpcMsg.BYHandShake{
 		CmdType:  rpcMsg.CmdRecharge,
 		Sig:      sig,
 		UserAddr: w.acc.Address.String(),
 	}
-
 	jsonConn := &network.JsonConn{Conn: conn}
 	if err := jsonConn.Syn(hs); err != nil {
 		return err
 	}
-
-	w.payConn = jsonConn
-
+	//both require service and recharge are go through this conn
+	w.wConn = jsonConn
 	return nil
 }
 
 func (w *Wallet) Finish() {
-	w.payConn.Close()
+	w.wConn.Close()
 }
 
 func (w *Wallet) getOuterConn(addr string) (net.Conn, error) {
@@ -146,7 +146,6 @@ func (w *Wallet) ToString() string {
 }
 
 func (w *Wallet) Running(done chan error) {
-
 	for {
 		select {
 		case err := <-done:
@@ -232,7 +231,7 @@ func (w *Wallet) recharge(no int) error {
 
 	fmt.Printf("Create new packet bill:%s for miner:%s", minerAddr, bill.String())
 
-	if err := w.payConn.Syn(bill); err != nil {
+	if err := w.wConn.Syn(bill); err != nil {
 		fmt.Printf("\nwallet write back bill msg err:%v", err)
 		return err
 	}

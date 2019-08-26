@@ -7,7 +7,7 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/layers"
-	"github.com/proton-lab/atom-4g/pipeProxy"
+	"github.com/proton-lab/atom-4g/4GService"
 	"github.com/proton-lab/atom-4g/wallet"
 	"github.com/proton-lab/proton-node-4g/account"
 	"golang.org/x/net/publicsuffix"
@@ -18,7 +18,7 @@ import (
 	"strings"
 )
 
-var proxyConfTest = &pipeProxy.ProxyConfig{
+var proxyConfTest = &_GService.ProxyConfig{
 	WConfig: &wallet.WConfig{
 		BCAddr:     "YPDsDm5RBqhA14dgRUGMjE4SVq7A3AzZ4MqEFFL3eZkhjZ",
 		Cipher:     "GffT4JanGFefAj4isFLYbodKmxzkJt9HYTQTKquueV8mypm3oSicBZ37paYPnDscQ7XoPa4Qgse6q4yv5D2bLPureawFWhicvZC5WqmFp9CGE",
@@ -73,13 +73,10 @@ func test12() {
 }
 
 func main() {
+	test4G()
+}
 
-	//failed:
-	//YPCr9KRE3tRXaKMb388A5gEjFqK3u4sAo9EBLK7tc94xwh
-	//3HvcAKMmKT6hEEgpYo4Sf1TNRAewbZtyqTkopC9G4E6nv89vqkiq1ft5Rzf7pmim3b4ZxXaEu1bR8yGzJUM8865mNoX2FEkmaJsGKvSfHYMyu5
-	//success:
-	//YPDsDm5RBqhA14dgRUGMjE4SVq7A3AzZ4MqEFFL3eZkhjZ
-	//GffT4JanGFefAj4isFLYbodKmxzkJt9HYTQTKquueV8mypm3oSicBZ37paYPnDscQ7XoPa4Qgse6q4yv5D2bLPureawFWhicvZC5WqmFp9CGE
+func test4G(){
 	var conf = &wallet.WConfig{
 		BCAddr:     "YPGmpwh8Ev4eKmBhTvidBqgUvk4sgNJqipvQShtfR7vVYk",
 		Cipher:     "4aLvNMdFyJy6wHsKZJMC1r2m6NzEBWu5sNPzqGhFyXhJwwY43unxijWGbKGZWqzJdZnvLSzqdtZqscVRHbz1hj5Yd9JdxG3wYv7FEqV57ZqNa",
@@ -87,7 +84,7 @@ func main() {
 		Saver:      nil,
 		ServerId: &wallet.ServeNodeId{
 			ID: account.ID("YP6ywypy2P3dMRYCG2V1PZMCeuT8mUpgr1Sapo9XhhLRki"),
-			IP: "127.0.0.1", //192.168.1.108//192.168.30.13
+			IP: "127.0.0.1",
 		},
 	}
 	w, err := wallet.NewWallet(conf, "123")
@@ -95,13 +92,14 @@ func main() {
 		panic(err)
 	}
 
-	proxy, e := pipeProxy.NewProxy(":51080", w, NewTunReader())
+	proxy, e := _GService.NewProxy(":51080", w, NewTunReader())
 	if e != nil {
 		panic(err)
 	}
 
 	proxy.Proxying()
 }
+
 
 func test10() {
 	fmt.Println(publicsuffix.EffectiveTLDPlusOne("1-apple.com.tw"))
@@ -130,7 +128,7 @@ func test11() {
 		panic(err)
 	}
 
-	proxy, e := pipeProxy.NewProxy(":51080", w, NewTunReader())
+	proxy, e := _GService.NewProxy(":51080", w, NewTunReader())
 	if e != nil {
 		panic(err)
 	}

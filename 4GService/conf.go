@@ -1,4 +1,4 @@
-package pipeProxy
+package _GService
 
 import (
 	"bufio"

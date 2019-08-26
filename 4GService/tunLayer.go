@@ -1,4 +1,4 @@
-package pipeProxy
+package _GService
 
 import "net"
 
@@ -9,3 +9,4 @@ type Tun2Pipe interface {
 	Proxying(chan error)
 	RemoveFromSession(keyPort int)
 }
+

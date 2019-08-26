@@ -1,4 +1,4 @@
-package pipeProxy
+package _GService
 
 import (
 	"fmt"
@@ -7,20 +7,14 @@ import (
 	"strconv"
 )
 
-type PipeProxy struct {
-	*net.TCPListener
+type _4GProxy struct {
 	Done   chan error
 	Wallet *wallet.Wallet
 	TunSrc Tun2Pipe
 }
 
-func NewProxy(addr string, w *wallet.Wallet, t Tun2Pipe) (*PipeProxy, error) {
-	l, e := net.Listen("tcp", addr)
-	if e != nil {
-		return nil, e
-	}
-	ap := &PipeProxy{
-		TCPListener: l.(*net.TCPListener),
+func NewProxy(addr string, w *wallet.Wallet, t Tun2Pipe) (*_4GProxy, error) {
+	ap := &_4GProxy{
 		Wallet:      w,
 		TunSrc:      t,
 		Done:        make(chan error),
@@ -28,7 +22,7 @@ func NewProxy(addr string, w *wallet.Wallet, t Tun2Pipe) (*PipeProxy, error) {
 	return ap, nil
 }
 
-func (pp *PipeProxy) Proxying() {
+func (pp *_4GProxy) Proxying() {
 
 	go pp.TunSrc.Proxying(pp.Done)
 
@@ -38,38 +32,13 @@ func (pp *PipeProxy) Proxying() {
 
 	select {
 	case err := <-pp.Done:
-		fmt.Printf("PipeProxy exit for:%s", err.Error())
+		fmt.Printf("_4GProxy exit for:%s", err.Error())
 	}
 
 	pp.Finish()
 }
 
-func (pp *PipeProxy) Accepting(done chan error) {
-
-	fmt.Println("Proxy start working at:", pp.Addr().String())
-	defer fmt.Println("Proxy exit......")
-
-	for {
-		conn, err := pp.Accept()
-		if err != nil {
-			fmt.Printf("\nFinish to proxy system request :%s", err)
-			done <- err
-			return
-		}
-
-		conn.(*net.TCPConn).SetKeepAlive(true)
-
-		go pp.consume(conn)
-
-		select {
-		case err := <-done:
-			fmt.Printf("\nProxy closed by out controller:%s", err.Error())
-		default:
-		}
-	}
-}
-
-func (pp *PipeProxy) consume(conn net.Conn) {
+func (pp *_4GProxy) consume(conn net.Conn) {
 	defer conn.Close()
 
 	tgtAddr := pp.TunSrc.GetTarget(conn)
@@ -87,7 +56,6 @@ func (pp *PipeProxy) consume(conn net.Conn) {
 		return
 	}
 
-	pipe.PullDataFromServer()
 
 	rAddr := conn.RemoteAddr().String()
 	_, port, _ := net.SplitHostPort(rAddr)
@@ -98,7 +66,7 @@ func (pp *PipeProxy) consume(conn net.Conn) {
 	fmt.Printf("\n\nPipe(%s) for(%s) is closing", rAddr, tgtAddr)
 }
 
-func (pp *PipeProxy) Finish() {
+func (pp *_4GProxy) Finish() {
 
 	if pp.TCPListener != nil {
 		pp.TCPListener.Close()

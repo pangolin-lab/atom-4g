@@ -1,7 +1,7 @@
 package _GService
 
 import (
-	"github.com/proton-lab/proton-node-4g/service/rpcMsg"
+	"github.com/pangolin-lab/proton-node-4g/service/rpcMsg"
 	"net"
 )
 

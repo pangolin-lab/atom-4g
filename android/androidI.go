@@ -4,11 +4,11 @@ import "C"
 import (
 	"fmt"
 	"github.com/btcsuite/btcutil/base58"
-	"github.com/proton-lab/atom-4g/ethereum"
-	"github.com/proton-lab/atom-4g/4GService"
-	"github.com/proton-lab/atom-4g/tun2Pipe"
-	"github.com/proton-lab/atom-4g/wallet"
-	"github.com/proton-lab/proton-node-4g/account"
+	"github.com/pangolin-lab/atom-4g/ethereum"
+	"github.com/pangolin-lab/atom-4g/4GService"
+	"github.com/pangolin-lab/atom-4g/tun2Pipe"
+	"github.com/pangolin-lab/atom-4g/wallet"
+	"github.com/pangolin-lab/proton-node-4g/account"
 )
 
 type VpnDelegate interface {

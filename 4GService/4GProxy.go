@@ -2,7 +2,7 @@ package _GService
 
 import (
 	"fmt"
-	"github.com/proton-lab/atom-4g/wallet"
+	"github.com/pangolin-lab/atom-4g/wallet"
 	"net"
 	"strconv"
 )

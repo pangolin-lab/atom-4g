@@ -3,8 +3,8 @@ package wallet
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/proton-lab/proton-node-4g/network"
-	"github.com/proton-lab/proton-node-4g/service/rpcMsg"
+	"github.com/pangolin-lab/proton-node-4g/network"
+	"github.com/pangolin-lab/proton-node-4g/service/rpcMsg"
 	"net"
 	"time"
 )

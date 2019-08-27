@@ -38,7 +38,7 @@ func (m *ServeNodeId) TestTTL(saver func(fd uintptr)) bool {
 		return false
 	}
 
-	hs := &rpcMsg.YPHandShake{
+	hs := &rpcMsg.BYHandShake{
 		CmdType: rpcMsg.CmdCheck,
 	}
 

@@ -1,4 +1,4 @@
-package _GService
+package Service4G
 
 import (
 	"github.com/pangolin-lab/go-node-4g/service/rpcMsg"
@@ -7,7 +7,7 @@ import (
 
 type flowManager interface {
 	//check bucket level
-	RequireService(conn net.Conn) rpcMsg.BucketCheck
+	RequireService(conn net.Conn) rpcMsg.CreditOnNode
 	//calculate usage by self
 	CalculateUsage()(tempUsageLocal uint64,bucketLvlLocal uint64)
 }

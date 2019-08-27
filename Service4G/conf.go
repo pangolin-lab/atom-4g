@@ -1,4 +1,4 @@
-package _GService
+package Service4G
 
 import (
 	"bufio"
@@ -20,12 +20,12 @@ const DefaultSeedSever = "https://raw.githubusercontent.com/proton-lab/quantum/m
 
 type RefreshNodeIDs func(ids string)
 
-type ProxyConfig struct {
+type ConsumerConfig struct {
 	*wallet.WConfig
 	BootNodes string
 }
 
-func (c *ProxyConfig) String() string {
+func (c *ConsumerConfig) String() string {
 	return fmt.Sprintf("\n++++++++++++++++++++++++++++++++++++++++++++++++++++\n"+
 		"+\tWallet:%s\n"+
 		"+\tbootnodes:%s\n"+
@@ -35,7 +35,7 @@ func (c *ProxyConfig) String() string {
 	)
 }
 
-func (c *ProxyConfig) FindBootServers(path string) []*wallet.ServeNodeId {
+func (c *ConsumerConfig) FindBootServers(path string) []*wallet.ServeNodeId {
 	println("boot nodes saved path:", path)
 
 	var nodes []string

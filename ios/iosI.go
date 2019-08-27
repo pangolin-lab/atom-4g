@@ -6,7 +6,7 @@ import (
 	"crypto/cipher"
 	"fmt"
 	"github.com/btcsuite/btcutil/base58"
-	"github.com/pangolin-lab/atom-4g/4GService"
+	"github.com/pangolin-lab/atom-4g/Service4G"
 	"github.com/pangolin-lab/go-node-4g/account"
 	"io/ioutil"
 	"net/http"
@@ -21,13 +21,13 @@ const (
 
 func LoadNodes() string {
 
-	nodes := _GService.LoadFromServer("")
+	nodes := Service4G.LoadFromServer("")
 	return strings.Join(nodes, "\n")
 }
 
 func FindBestNode(nodesStr string) string {
 	nodes := strings.Split(nodesStr, "\n")
-	validIDs := _GService.ProbeAllNodes(nodes, nil)
+	validIDs := Service4G.ProbeAllNodes(nodes, nil)
 	if len(validIDs) == 0 {
 		return ""
 	}

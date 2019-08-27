@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/btcsuite/btcutil/base58"
 	"github.com/pangolin-lab/atom-4g/ethereum"
-	"github.com/pangolin-lab/atom-4g/4GService"
+	"github.com/pangolin-lab/atom-4g/Service4G"
 	"github.com/pangolin-lab/atom-4g/tun2Pipe"
 	"github.com/pangolin-lab/atom-4g/wallet"
 	"github.com/pangolin-lab/go-node-4g/account"
@@ -18,8 +18,8 @@ type VpnDelegate interface {
 
 const Separator = "@@@"
 
-var _instance *_GService.PipeProxy = nil
-var proxyConf = &_GService.ProxyConfig{}
+var _instance *Service4G.PipeProxy = nil
+var proxyConf = &Service4G.ConsumerConfig{}
 
 func InitVPN(addr, cipher, url, boot, IPs string, d VpnDelegate) error {
 
@@ -63,7 +63,7 @@ func SetupVpn(password, locAddr string) error {
 		return err
 	}
 
-	proxy, e := _GService.NewProxy(locAddr, w, t2s)
+	proxy, e := Service4G.NewConsumer(locAddr, w, t2s)
 	if e != nil {
 		return e
 	}

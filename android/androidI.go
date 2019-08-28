@@ -8,7 +8,7 @@ import (
 	"github.com/Iuduxras/atom-4g/Service4G"
 	"github.com/Iuduxras/atom-4g/tun2Pipe"
 	"github.com/Iuduxras/atom-4g/wallet"
-	"github.com/Iuduxras/go-node-4g/account"
+	"github.com/Iuduxras/pangolin-node-4g/account"
 )
 
 type VpnDelegate interface {

@@ -1,7 +1,7 @@
 package Service4G
 
 import (
-	"github.com/Iuduxras/go-node-4g/service/rpcMsg"
+	"github.com/Iuduxras/pangolin-node-4g/service/rpcMsg"
 	"net"
 )
 

@@ -9,7 +9,7 @@ import (
 	"github.com/google/gopacket/layers"
 	"github.com/Iuduxras/atom-4g/Service4G"
 	"github.com/Iuduxras/atom-4g/wallet"
-	"github.com/Iuduxras/go-node-4g/account"
+	"github.com/Iuduxras/pangolin-node-4g/account"
 	"golang.org/x/net/publicsuffix"
 	"io/ioutil"
 	"net"

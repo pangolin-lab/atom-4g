@@ -2,7 +2,7 @@ package Service4G
 
 import (
 	"fmt"
-	"github.com/pangolin-lab/atom-4g/wallet"
+	"github.com/Iuduxras/atom-4g/wallet"
 )
 
 type Consumer4G struct {

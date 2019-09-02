@@ -18,22 +18,40 @@ func NewConsumer(addr string, w wallet.UserWallet) (*Consumer4G, error) {
 	return ap, nil
 }
 
-func (pp *Consumer4G) Consuming() {
+func (c4g *Consumer4G) Consuming() {
 
-	go pp.Wallet.Running(pp.Done)
+	go c4g.Wallet.Running(c4g.Done)
 
 	select {
-	case err := <-pp.Done:
+	case err := <-c4g.Done:
 		fmt.Printf("Consumer4G exit for:%s", err.Error())
 	}
 
-	pp.Finish()
+	c4g.Finish()
 }
 
 
-func (pp *Consumer4G) Finish() {
+func (c4g *Consumer4G) Finish() {
 
-	if pp.Wallet != nil {
-		pp.Wallet.Finish()
+	if c4g.Wallet != nil {
+		c4g.Wallet.Finish()
+	}
+}
+
+func (c4g *Consumer4G) Query() string{
+	if r,e:= c4g.Wallet.Query();e!=nil{
+		c4g.Done <- e
+		return ""
+	}else{
+		return r
+	}
+}
+
+func (c4g *Consumer4G) Recharge(no int) error {
+	if err:=c4g.Wallet.Recharge(no);err!=nil{
+		c4g.Done <- err
+		return err
+	}else{
+		return nil
 	}
 }

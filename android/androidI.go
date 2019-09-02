@@ -7,7 +7,6 @@ import (
 	"github.com/Iuduxras/atom-4g/ethereum"
 	"github.com/Iuduxras/atom-4g/tun2Pipe"
 	"github.com/Iuduxras/atom-4g/wallet"
-	"github.com/Iuduxras/pangolin-node-4g/DataService"
 	"github.com/Iuduxras/pangolin-node-4g/account"
 	"github.com/Iuduxras/pangolin-node-4g/pbs/pipeProxy"
 	"github.com/btcsuite/btcutil/base58"
@@ -26,6 +25,7 @@ type ConsumeDelegate interface {
 	GetBootPath() string
 }
 
+//consumer setup
 func InitConsumer(addr, cipher, url, boot, ip,mac,IPs ,dbPath string,d ConsumeDelegate) error{
 
 	proxyConf.WConfig = &wallet.WConfig{
@@ -44,13 +44,6 @@ func InitConsumer(addr, cipher, url, boot, ip,mac,IPs ,dbPath string,d ConsumeDe
 
 	proxyConf.ServerId = mis[0]
 	println(proxyConf.String())
-
-	//set db service
-
-	err:=DataService.InitWithExternalStoragePath(dbPath)
-	if err!=nil{
-		return err
-	}
 
 	return nil
 }
@@ -82,6 +75,36 @@ func StopConsuming(){
 		_instance = nil
 	}
 }
+
+/*
+	returns:
+	{
+		Accepted bool
+		Credit   int64
+	}
+*/
+func Query() string{
+	if _instance !=nil{
+		return _instance.Query()
+	}else{
+		return ""
+	}
+}
+
+func Recharge(no int) bool{
+	if _instance !=nil{
+		if err:=_instance.Recharge(no);err!=nil{
+			return false
+		}else{
+			return true
+		}
+	}else{
+		return false
+	}
+}
+
+
+//accounts and ethereum opts
 
 func VerifyAccount(addr, cipher, password string) bool {
 	if _, err := account.AccFromString(addr, cipher, password); err != nil {

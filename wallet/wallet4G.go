@@ -20,8 +20,8 @@ type WConfig struct {
 	SettingUrl string
 	ServerId   *ServeNodeId
 	Saver      func(fd uintptr)
-	Ip 		   string
-	Mac		   string
+	Ip         string
+	Mac        string
 }
 
 var CreditLocal int64
@@ -43,14 +43,11 @@ func (c *WConfig) String() string {
 		c.ServerId.String())
 }
 
-
 type PacketBucket struct {
 	sync.RWMutex
 	token  chan int
-	unpaid int
-	total  int
+	//unpaid int    //unpaid is removed because it should be handled out of library
 }
-
 
 type Wallet struct {
 	*PacketBucket
@@ -66,8 +63,8 @@ type Wallet struct {
 }
 
 type InternetAddress struct {
-	IP      string
-	Mac     string
+	IP  string
+	Mac string
 }
 
 func NewWallet(conf *WConfig, password string) (*Wallet, error) {
@@ -89,7 +86,7 @@ func NewWallet(conf *WConfig, password string) (*Wallet, error) {
 		},
 		InternetAddress: &InternetAddress{
 			IP:  conf.Ip,
-			Mac:conf.Mac,
+			Mac: conf.Mac,
 		},
 	}
 	w.minerAddr = make([]byte, len(w.minerID))
@@ -117,7 +114,7 @@ func NewWallet(conf *WConfig, password string) (*Wallet, error) {
 //pay channel
 func (w *Wallet) setPayChannel() error {
 	fmt.Printf("\ncreatePayChannel Wallet socks ID addr:%s ", w.minerNetAddr)
-	conn, err := getOuterConn(w,w.minerNetAddr)
+	conn, err := getOuterConn(w, w.minerNetAddr)
 	if err != nil {
 		return err
 	}
@@ -138,7 +135,7 @@ func (w *Wallet) setPayChannel() error {
 //check channel (require service)
 func (w *Wallet) setCheckChannel() error {
 	fmt.Printf("\ncreateCheckChannel Wallet socks ID addr:%s ", w.minerNetAddr)
-	conn, err := getOuterConn(w,w.minerNetAddr)
+	conn, err := getOuterConn(w, w.minerNetAddr)
 	if err != nil {
 		return err
 	}
@@ -187,38 +184,16 @@ func (w *Wallet) ToString() string {
 
 func (w *Wallet) Running(done chan error) {
 
-	ticker := time.NewTicker(time.Duration(time.Second*2))
-	defer ticker.Stop()
 	for {
 		select {
-			case err := <-done:
-				fmt.Printf("\nwallet closed by out controller:%s", err.Error())
-				//what's wrong with this channel
-			case no := <-w.token:
-				if err := w.chargeUP(no); err != nil {
-					fmt.Printf("\n Recharge failed:%s maybe I'll be cut off!", err.Error())
-					done <- err
-				}
-			case <-time.After(RechargeTimeInterval):
-				if err := w.timerRecharge(); err != nil {
-					fmt.Printf("\n Timer recharge failed:%s maybe I'll be cut off!", err.Error())
-					done <- err
-				}
-			case <-ticker.C:
-				if err:=w.checkUnpaid();err!=nil{
-					fmt.Printf("\n set unpaid failed:%s maybe I'll be cut off!", err.Error())
-					done <-err
-				}
+		case err := <-done:
+			fmt.Printf("\nwallet closed by out controller:%s", err.Error())
 		}
 	}
 }
 
-
-//>>>>>>>>>>>>>>>>>>this implement is for demo version<<<<<<<<<<<<<<<<<
-func (w *Wallet) checkUnpaid() error{
-	//check unpaid through conn
-
-	srv:= &rpcMsg.SevReqData{
+func (w *Wallet) Query() (string,error) {
+	srv := &rpcMsg.SevReqData{
 		Addr: w.acc.Address.String(),
 		Ip:   w.IP,
 		Mac:  w.Mac,
@@ -226,67 +201,38 @@ func (w *Wallet) checkUnpaid() error{
 
 	data, err := json.Marshal(srv)
 	if err != nil {
-		return err
+		return "",err
 	}
-
 	sig := ed25519.Sign(w.acc.Key.PriKey, data)
-
-	request:= &rpcMsg.CreditQuery{
+	request := &rpcMsg.CreditQuery{
 		Sig:        sig,
 		SevReqData: srv,
 	}
+	if d,err := w.checkConn.SynResRaw(request); err != nil {
 
-	res:=&rpcMsg.CreditOnNode{}
-	if err:=w.checkConn.SynRes(request,res);err!=nil{
-		return err
+		return "",err
+	}else{
+		return d,nil
 	}
-
-	if res.Accepted{
-		fmt.Printf("user: %s require service accepted",srv.Addr)
-	}
-
-	diff:= CreditLocal - res.Credit
-	if diff>0{
-		w.token<- int(diff)
-	}
-	return nil
 }
 
 
+func (w *Wallet) Recharge(no int) error {
 
-func (w *Wallet) timerRecharge() error {
-	w.Lock()
-	defer w.Unlock()
-
-	fmt.Printf("\n  time to recharge report unpaid:%d", w.unpaid)
-	if w.unpaid < rpcMsg.MinRechargeSize {
-		return nil
-	}
-
-	if err := w.recharge(w.unpaid); err != nil {
+	minerAddr := string(w.minerAddr)
+	bill, err := CreatePayBill(string(w.acc.Address), minerAddr, no, w.acc.Key.PriKey)
+	if err != nil {
 		return err
 	}
 
-	w.unpaid = 0
-	return nil
-}
+	fmt.Printf("Create new packet bill:%s for miner:%s", minerAddr, bill.String())
 
-func (w *Wallet) chargeUP(no int) error {
-	w.Lock()
-	defer w.Unlock()
-	w.unpaid += no
-
-	fmt.Printf("\n  usage report unpaid:%d, this time:%d", w.unpaid, no)
-
-	if w.unpaid < rpcMsg.RechargeThreshold {
-		return nil
-	}
-
-	if err := w.recharge(w.unpaid); err != nil {
+	if err := w.payConn.Syn(bill); err != nil {
+		fmt.Printf("\nwallet write back bill msg err:%v", err)
 		return err
 	}
 
-	w.unpaid = 0
+	fmt.Printf("recharge success:%d", no)
 	return nil
 }
 
@@ -310,23 +256,3 @@ func CreatePayBill(user, miner string, usage int, priKey ed25519.PrivateKey) (*r
 	}, nil
 }
 
-func (w *Wallet) recharge(no int) error {
-
-	minerAddr := string(w.minerAddr)
-	bill, err := CreatePayBill(string(w.acc.Address), minerAddr, no, w.acc.Key.PriKey)
-	if err != nil {
-		return err
-	}
-
-	fmt.Printf("Create new packet bill:%s for miner:%s", minerAddr, bill.String())
-
-	if err := w.payConn.Syn(bill); err != nil {
-		fmt.Printf("\nwallet write back bill msg err:%v", err)
-		return err
-	}
-
-
-
-	fmt.Printf("recharge success:%d", no)
-	return nil
-}

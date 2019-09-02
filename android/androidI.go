@@ -3,12 +3,14 @@ package androidLib
 import "C"
 import (
 	"fmt"
-	"github.com/btcsuite/btcutil/base58"
-	"github.com/Iuduxras/atom-4g/ethereum"
 	"github.com/Iuduxras/atom-4g/Service4G"
+	"github.com/Iuduxras/atom-4g/ethereum"
 	"github.com/Iuduxras/atom-4g/tun2Pipe"
 	"github.com/Iuduxras/atom-4g/wallet"
+	"github.com/Iuduxras/pangolin-node-4g/DataService"
 	"github.com/Iuduxras/pangolin-node-4g/account"
+	"github.com/Iuduxras/pangolin-node-4g/pbs/pipeProxy"
+	"github.com/btcsuite/btcutil/base58"
 )
 
 type VpnDelegate interface {
@@ -17,28 +19,24 @@ type VpnDelegate interface {
 }
 
 const Separator = "@@@"
+var proxyConf = &pipeProxy.ProxyConfig{}
+var _instance *Service4G.Consumer4G = nil
 
-var _instance *Service4G.PipeProxy = nil
-var proxyConf = &Service4G.ConsumerConfig{}
+type ConsumeDelegate interface {
+	GetBootPath() string
+}
 
-func InitVPN(addr, cipher, url, boot, IPs string, d VpnDelegate) error {
-
-	pt := func(fd uintptr) {
-		d.ByPass(int32(fd))
-	}
+func InitConsumer(addr, cipher, url, boot, ip,mac,IPs ,dbPath string,d ConsumeDelegate) error{
 
 	proxyConf.WConfig = &wallet.WConfig{
 		BCAddr:     addr,
 		Cipher:     cipher,
 		SettingUrl: url,
-		Saver:      pt,
+		Ip:         ip,
+		Mac:        mac,
 	}
-	tun2Pipe.VpnInstance = d
-	tun2Pipe.Protector = pt
 
 	proxyConf.BootNodes = boot
-	tun2Pipe.ByPassInst().Load(IPs)
-
 	mis := proxyConf.FindBootServers(d.GetBootPath())
 	if len(mis) == 0 {
 		return fmt.Errorf("no valid boot strap node")
@@ -46,54 +44,43 @@ func InitVPN(addr, cipher, url, boot, IPs string, d VpnDelegate) error {
 
 	proxyConf.ServerId = mis[0]
 	println(proxyConf.String())
-	return nil
-}
 
-func SetupVpn(password, locAddr string) error {
+	//set db service
 
-	t2s, err := tun2Pipe.New(locAddr)
-	if err != nil {
+	err:=DataService.InitWithExternalStoragePath(dbPath)
+	if err!=nil{
 		return err
 	}
 
-	fmt.Println(proxyConf.String())
+	return nil
+}
 
+func SetupConsumer(password,locAddr string) error{
 	w, err := wallet.NewWallet(proxyConf.WConfig, password)
 	if err != nil {
 		return err
 	}
-
-	proxy, e := Service4G.NewConsumer(locAddr, w, t2s)
+	consumer, e := Service4G.NewConsumer(locAddr, w)
 	if e != nil {
-		return e
+		panic(err)
 	}
-	_instance = proxy
+	_instance = consumer
 	return nil
 }
 
-func Proxying() {
-	if _instance == nil {
+func Consuming(){
+	if _instance ==nil{
 		return
 	}
-	_instance.Proxying()
+	_instance.Consuming()
 	_instance = nil
 }
 
-func StopVpn() {
-	if _instance != nil {
+func StopConsuming(){
+	if _instance !=nil {
 		_instance.Done <- fmt.Errorf("user close this")
 		_instance = nil
 	}
-}
-func InputPacket(data []byte) error {
-
-	if _instance == nil {
-		return fmt.Errorf("tun isn't initilized ")
-	}
-
-	_instance.TunSrc.InputPacket(data)
-
-	return nil
 }
 
 func VerifyAccount(addr, cipher, password string) bool {

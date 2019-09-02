@@ -19,3 +19,5 @@
 /.idea/vcs.xml
 .idea/
 bin/
+*.aar
+*.jar

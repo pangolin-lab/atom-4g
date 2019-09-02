@@ -111,19 +111,17 @@ func test4G(){
 		Saver:      nil,
 		ServerId: &wallet.ServeNodeId{
 			ID: account.ID("YPDFSEKYU3tYfpvxER3JDTqDMb4vB4SWqawTRmaa3jnnuA"),
-			IP: "172.168.100.1",
+			IP: "172.16.100.1",
 		},
 	}
 	w, err := wallet.NewWallet(conf, "123")
 	if err != nil {
 		panic(err)
 	}
-
 	proxy, e := Service4G.NewConsumer(":51080", w)
 	if e != nil {
 		panic(err)
 	}
-
 	proxy.Consuming()
 }
 

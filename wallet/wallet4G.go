@@ -214,7 +214,6 @@ func (w *Wallet) Running(done chan error) {
 }
 
 
-
 //>>>>>>>>>>>>>>>>>>this implement is for demo version<<<<<<<<<<<<<<<<<
 func (w *Wallet) checkUnpaid() error{
 	//check unpaid through conn
@@ -252,6 +251,7 @@ func (w *Wallet) checkUnpaid() error{
 	}
 	return nil
 }
+
 
 
 func (w *Wallet) timerRecharge() error {
@@ -325,8 +325,6 @@ func (w *Wallet) recharge(no int) error {
 		return err
 	}
 
-	//todo
-	//CreditLocal += int64(no)
 
 
 	fmt.Printf("recharge success:%d", no)

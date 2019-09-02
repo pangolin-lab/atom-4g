@@ -10,7 +10,7 @@ type Consumer4G struct {
 	Wallet wallet.UserWallet
 }
 
-func NewConsumer(addr string, w wallet.UserWallet, t Tun2Pipe) (*Consumer4G, error) {
+func NewConsumer(addr string, w wallet.UserWallet) (*Consumer4G, error) {
 	ap := &Consumer4G{
 		Wallet:      w,
 		Done:        make(chan error),

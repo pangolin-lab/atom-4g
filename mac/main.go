@@ -68,15 +68,13 @@ func test12() {
 		panic(err)
 	}
 	print(acc)
-	//createKs()
-	//importKs()
 }
 
 func main() {
 	test4G()
 }
 
-func test4G(){
+func test4Glocal(){
 	var conf = &wallet.WConfig{
 		BCAddr:     "YPGmpwh8Ev4eKmBhTvidBqgUvk4sgNJqipvQShtfR7vVYk",
 		Cipher:     "4aLvNMdFyJy6wHsKZJMC1r2m6NzEBWu5sNPzqGhFyXhJwwY43unxijWGbKGZWqzJdZnvLSzqdtZqscVRHbz1hj5Yd9JdxG3wYv7FEqV57ZqNa",
@@ -94,7 +92,34 @@ func test4G(){
 		panic(err)
 	}
 
-	proxy, e := Service4G.NewConsumer(":51080", w, NewTunReader())
+	proxy, e := Service4G.NewConsumer(":51080", w)
+	if e != nil {
+		panic(err)
+	}
+
+	proxy.Consuming()
+}
+
+
+func test4G(){
+	var conf = &wallet.WConfig{
+		BCAddr:     "YPGmpwh8Ev4eKmBhTvidBqgUvk4sgNJqipvQShtfR7vVYk",
+		Cipher:     "4aLvNMdFyJy6wHsKZJMC1r2m6NzEBWu5sNPzqGhFyXhJwwY43unxijWGbKGZWqzJdZnvLSzqdtZqscVRHbz1hj5Yd9JdxG3wYv7FEqV57ZqNa",
+		SettingUrl: "",
+		Ip:			"172.168.100.163",
+		Mac: 		"38:f9:d3:8c:21:f4",
+		Saver:      nil,
+		ServerId: &wallet.ServeNodeId{
+			ID: account.ID("YPDFSEKYU3tYfpvxER3JDTqDMb4vB4SWqawTRmaa3jnnuA"),
+			IP: "172.168.100.1",
+		},
+	}
+	w, err := wallet.NewWallet(conf, "123")
+	if err != nil {
+		panic(err)
+	}
+
+	proxy, e := Service4G.NewConsumer(":51080", w)
 	if e != nil {
 		panic(err)
 	}
@@ -130,7 +155,7 @@ func test11() {
 		panic(err)
 	}
 
-	proxy, e := Service4G.NewConsumer(":51080", w, NewTunReader())
+	proxy, e := Service4G.NewConsumer(":51080", w)
 	if e != nil {
 		panic(err)
 	}

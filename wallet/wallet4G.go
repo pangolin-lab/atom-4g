@@ -80,7 +80,7 @@ func NewWallet(conf *WConfig, password string) (*Wallet, error) {
 		acc:          acc,
 		minerID:      conf.ServerId.ID,
 		sysSaver:     conf.Saver,
-		minerNetAddr: conf.ServerId.TONetAddrFixedPort(),
+		minerNetAddr: NetAddrFixedPort(conf.ServerId.IP),
 		PacketBucket: &PacketBucket{
 			token: make(chan int, MaxLocalConn),
 		},

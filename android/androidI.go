@@ -29,7 +29,6 @@ type ConsumeDelegate interface {
 
 //consumer setup
 func InitConsumer(addr, cipher, url, boot, ip,mac,IPs ,dbPath,serverIp string,d ConsumeDelegate) error{
-
 	//first we should get minerId
 	conn,err:=wallet.GetOuterConnSimple(wallet.NetAddrFixedPort(serverIp))
 	if err!=nil{
@@ -53,7 +52,6 @@ func InitConsumer(addr, cipher, url, boot, ip,mac,IPs ,dbPath,serverIp string,d 
 		fmt.Printf("%s not a valid node address",ack.Message)
 		return err
 	}
-
 	proxyConf.WConfig = &wallet.WConfig{
 		BCAddr:     addr,
 		Cipher:     cipher,
@@ -65,7 +63,6 @@ func InitConsumer(addr, cipher, url, boot, ip,mac,IPs ,dbPath,serverIp string,d 
 			IP: serverIp,
 		},
 	}
-
 	return nil
 }
 

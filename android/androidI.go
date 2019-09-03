@@ -8,7 +8,9 @@ import (
 	"github.com/Iuduxras/atom-4g/tun2Pipe"
 	"github.com/Iuduxras/atom-4g/wallet"
 	"github.com/Iuduxras/pangolin-node-4g/account"
+	"github.com/Iuduxras/pangolin-node-4g/network"
 	"github.com/Iuduxras/pangolin-node-4g/pbs/pipeProxy"
+	"github.com/Iuduxras/pangolin-node-4g/service/rpcMsg"
 	"github.com/btcsuite/btcutil/base58"
 )
 
@@ -26,7 +28,34 @@ type ConsumeDelegate interface {
 }
 
 //consumer setup
-func InitConsumer(addr, cipher, url, boot, ip,mac,IPs ,dbPath string,d ConsumeDelegate) error{
+func InitConsumer(addr, cipher, url, boot, ip,mac,IPs ,dbPath,serverIp string,d ConsumeDelegate) error{
+
+	//first we should get minerId
+	conn,err:=wallet.GetOuterConnSimple(wallet.NetAddrFixedPort(serverIp))
+	if err!=nil{
+		fmt.Printf("can't connect 4g node")
+		return err
+	}
+
+	hs := &rpcMsg.BYHandShake{
+		CmdType:  rpcMsg.CmdCheck,
+	}
+
+	jsonConn := network.JsonConn{Conn: conn}
+	ack := network.ProtonACK{
+		Success: true,
+		Message:account.GetAccount().Address.String(),
+	}
+	if err := jsonConn.SynRes(hs,ack); err != nil {
+		fmt.Printf("TestTTL(%s) err:%s", addr, err)
+		return err
+	}
+
+	ID,err2:=account.ConvertToID(ack.Message)
+	if err2!=nil{
+		fmt.Printf("%s not a valid node address",ack.Message)
+		return err
+	}
 
 	proxyConf.WConfig = &wallet.WConfig{
 		BCAddr:     addr,
@@ -34,16 +63,11 @@ func InitConsumer(addr, cipher, url, boot, ip,mac,IPs ,dbPath string,d ConsumeDe
 		SettingUrl: url,
 		Ip:         ip,
 		Mac:        mac,
+		ServerId:&wallet.ServeNodeId{
+			ID: ID,
+			IP: serverIp,
+		},
 	}
-
-	proxyConf.BootNodes = boot
-	mis := proxyConf.FindBootServers(d.GetBootPath())
-	if len(mis) == 0 {
-		return fmt.Errorf("no valid boot strap node")
-	}
-
-	proxyConf.ServerId = mis[0]
-	println(proxyConf.String())
 
 	return nil
 }
@@ -103,8 +127,6 @@ func Recharge(no int) bool{
 	}
 }
 
-
-//accounts and ethereum opts
 
 func VerifyAccount(addr, cipher, password string) bool {
 	if _, err := account.AccFromString(addr, cipher, password); err != nil {

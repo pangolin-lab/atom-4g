@@ -13,6 +13,7 @@ import (
 
 const ServeNodeSep = "@"
 const ServeNodeTimeOut = time.Second * 2
+const ServerPort = uint16(50999)
 
 type ServeNodeId struct {
 	ID   account.ID
@@ -53,6 +54,10 @@ func (m *ServeNodeId) TestTTL(saver func(fd uintptr)) bool {
 func (m *ServeNodeId) TONetAddr() string {
 	port := m.ID.ToServerPort()
 	return network.JoinHostPort(m.IP, port)
+}
+
+func  NetAddrFixedPort(Ip string) string {
+	return network.JoinHostPort(Ip, ServerPort)
 }
 
 func (m *ServeNodeId) String() string {

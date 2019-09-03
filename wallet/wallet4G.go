@@ -80,7 +80,7 @@ func NewWallet(conf *WConfig, password string) (*Wallet, error) {
 		acc:          acc,
 		minerID:      conf.ServerId.ID,
 		sysSaver:     conf.Saver,
-		minerNetAddr: conf.ServerId.TONetAddr(),
+		minerNetAddr: conf.ServerId.TONetAddrFixedPort(),
 		PacketBucket: &PacketBucket{
 			token: make(chan int, MaxLocalConn),
 		},
@@ -110,6 +110,7 @@ func NewWallet(conf *WConfig, password string) (*Wallet, error) {
 
 	return w, nil
 }
+
 
 //pay channel
 func (w *Wallet) setPayChannel() error {
@@ -165,6 +166,16 @@ func getOuterConn(w *Wallet, addr string) (net.Conn, error) {
 			if w.sysSaver != nil {
 				return c.Control(w.sysSaver)
 			}
+			return nil
+		},
+	}
+	return d.Dial("tcp", addr)
+}
+
+func GetOuterConnSimple(addr string) (net.Conn, error) {
+	d := &net.Dialer{
+		Timeout: PipeDialTimeOut,
+		Control: func(network, address string, c syscall.RawConn) error {
 			return nil
 		},
 	}

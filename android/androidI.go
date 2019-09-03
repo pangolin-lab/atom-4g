@@ -42,10 +42,7 @@ func InitConsumer(addr, cipher, url, boot, ip,mac,IPs ,dbPath,serverIp string,d 
 	}
 
 	jsonConn := network.JsonConn{Conn: conn}
-	ack := network.ProtonACK{
-		Success: true,
-		Message:account.GetAccount().Address.String(),
-	}
+	ack := network.ProtonACK{}
 	if err := jsonConn.SynRes(hs,ack); err != nil {
 		fmt.Printf("TestTTL(%s) err:%s", addr, err)
 		return err

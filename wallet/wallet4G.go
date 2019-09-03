@@ -215,11 +215,11 @@ func (w *Wallet) Query() (string,error) {
 		Sig:        sig,
 		SevReqData: srv,
 	}
-
 	if d,err := w.checkConn.SynResRaw(request); err != nil {
 
 		return "",err
 	}else{
+		fmt.Printf("query answer is : %s",d)
 		return d,nil
 	}
 }

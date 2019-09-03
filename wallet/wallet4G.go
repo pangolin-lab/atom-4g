@@ -68,14 +68,12 @@ type InternetAddress struct {
 }
 
 func NewWallet(conf *WConfig, password string) (*Wallet, error) {
-
 	acc, err := account.AccFromString(conf.BCAddr, conf.Cipher, password)
 	if err != nil {
 		return nil, err
 	}
 	fmt.Printf("\n Unlock client success:%s Selected miner id:%s",
 		conf.BCAddr, conf.ServerId.String())
-
 	w := &Wallet{
 		acc:          acc,
 		minerID:      conf.ServerId.ID,
@@ -102,12 +100,10 @@ func NewWallet(conf *WConfig, password string) (*Wallet, error) {
 	}
 
 	if err := w.setCheckChannel(); err != nil {
-		log.Println("Create payment channel err:", err)
+		log.Println("Create check channel err:", err)
 		return nil, err
 	}
-
-	fmt.Printf("\nCreate payment channel success:%s", w.ToString())
-
+	fmt.Printf("\nCreate payment channel and check channel success:%s", w.ToString())
 	return w, nil
 }
 

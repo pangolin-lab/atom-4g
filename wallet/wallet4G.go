@@ -215,6 +215,9 @@ func (w *Wallet) Query() (string,error) {
 		Sig:        sig,
 		SevReqData: srv,
 	}
+
+	fmt.Printf("query credit message %s ", request)
+
 	if d,err := w.checkConn.SynResRaw(request); err != nil {
 
 		return "",err

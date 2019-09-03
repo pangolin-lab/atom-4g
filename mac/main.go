@@ -4,12 +4,12 @@ import "C"
 import (
 	"encoding/base64"
 	"fmt"
-	"github.com/ethereum/go-ethereum/accounts/keystore"
-	"github.com/google/gopacket"
-	"github.com/google/gopacket/layers"
 	"github.com/Iuduxras/atom-4g/Service4G"
 	"github.com/Iuduxras/atom-4g/wallet"
 	"github.com/Iuduxras/pangolin-node-4g/account"
+	"github.com/ethereum/go-ethereum/accounts/keystore"
+	"github.com/google/gopacket"
+	"github.com/google/gopacket/layers"
 	"golang.org/x/net/publicsuffix"
 	"io/ioutil"
 	"net"
@@ -122,6 +122,9 @@ func test4G(){
 	if e != nil {
 		panic(err)
 	}
+
+	proxy.Query()
+
 	proxy.Consuming()
 }
 

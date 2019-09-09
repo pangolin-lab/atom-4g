@@ -79,20 +79,18 @@ func SetupConsumer(password,locAddr string) error{
 	return nil
 }
 
-func Consuming(){
-	if _instance ==nil{
-		return
-	}
-	_instance.Consuming()
-	_instance = nil
-	fmt.Println("consuming is stopped")
-}
+//func Consuming(){
+//	if _instance ==nil{
+//		return
+//	}
+//	_instance.Consuming()
+//	_instance = nil
+//	fmt.Println("consuming is stopped")
+//}
 
 func StopConsuming(){
 	if _instance !=nil {
-		_instance.Done <- fmt.Errorf("user closed this")
-		_instance = nil
-		fmt.Println("user closed connection")
+		_instance.Finish()
 	}else{
 		fmt.Println("did't find _instance, do nothing")
 	}

@@ -85,12 +85,16 @@ func Consuming(){
 	}
 	_instance.Consuming()
 	_instance = nil
+	fmt.Println("consuming is stopped")
 }
 
 func StopConsuming(){
 	if _instance !=nil {
-		_instance.Done <- fmt.Errorf("user close this")
+		_instance.Done <- fmt.Errorf("user closed this")
 		_instance = nil
+		fmt.Println("user closed connection")
+	}else{
+		fmt.Println("did't find _instance, do nothing")
 	}
 }
 
@@ -112,6 +116,7 @@ func Query() string{
 func Recharge(no int) bool{
 	if _instance !=nil{
 		if err:=_instance.Recharge(no);err!=nil{
+			fmt.Printf("recharge error : %v",err)
 			return false
 		}else{
 			return true

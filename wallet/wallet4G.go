@@ -191,12 +191,14 @@ func (w *Wallet) ToString() string {
 
 func (w *Wallet) Running(done chan error) {
 
-	for {
-		select {
-		case err := <-done:
-			fmt.Printf("\nwallet closed by out controller:%s", err.Error())
-		}
-	}
+	//loop:
+	//for {
+	//	select {
+	//	case err := <-done:
+	//		fmt.Printf("\nwallet closed by out controller:%s", err.Error())
+	//		break loop
+	//	}
+	//}
 }
 
 func (w *Wallet) Query() (string,error) {

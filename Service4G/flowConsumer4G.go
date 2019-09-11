@@ -1,6 +1,7 @@
 package Service4G
 
 import (
+	"fmt"
 	"github.com/Iuduxras/atom-4g/wallet"
 )
 
@@ -44,6 +45,7 @@ func (c4g *Consumer4G) Finish() {
 func (c4g *Consumer4G) Query() string {
 	if r, e := c4g.Wallet.Query(); e != nil {
 		//c4g.Done <- e   //handled by android
+		fmt.Printf("query has a error: %v \n",e)
 		return ""
 	} else {
 		return r
@@ -52,6 +54,7 @@ func (c4g *Consumer4G) Query() string {
 
 func (c4g *Consumer4G) Recharge(no int) error {
 	if err := c4g.Wallet.Recharge(no); err != nil {
+		fmt.Printf("recharge has a error: %v \n",err)
 		//c4g.Done <- err  //handled by android
 		return err
 	} else {
